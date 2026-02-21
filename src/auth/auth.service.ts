@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -15,11 +19,11 @@ export class AuthService {
 		private prisma: PrismaService,
 		private configService: ConfigService,
 		private jwt: JwtService,
-        private usersService: UsersService
+		private usersService: UsersService
 	) {}
 
-    private EXPIRE_DAY_REFRESH_TOKEN = 3;
-    private REFRESH_TOKEN_NAME = 'refreshToken'
+	private EXPIRE_DAY_REFRESH_TOKEN = 3
+	REFRESH_TOKEN_NAME = 'refreshToken'
 
 	async register(input: AuthInput) {
 		try {
@@ -33,79 +37,104 @@ export class AuthService {
 				}
 			})
 
-            if(existingUser){
-                throw new BadRequestException('User with this email already exists')
-            }
+			if (existingUser) {
+				throw new BadRequestException('User with this email already exists')
+			}
 
-            const user = await this.prisma.user.create({
-                data:{
-                email: email,
-                password: (await hash(input.password))
-                }
-            })
+			const user = await this.prisma.user.create({
+				data: {
+					email: email,
+					password: await hash(input.password)
+				}
+			})
 
-            const tokens = this.generateTokens({
-                id: user.id,
-                role: user.role
-            })
+			const tokens = this.generateTokens({
+				id: user.id,
+				role: user.role
+			})
 
-            return { user, ...tokens}
-
+			return { user, ...tokens }
 		} catch (error) {
 			throw new BadRequestException('Registration failed: ' + error)
 		}
 	}
 
-    async login(input: AuthInput){
-        const user = await this.validateUser(input)
+	async login(input: AuthInput) {
+		const user = await this.validateUser(input)
 
-        const tokens = this.generateTokens({
-            id: user.id,
-            role: user.role
-        })
-        return { user, ...tokens}
-    }
-    
-    private async validateUser(input: AuthInput){
-        const email = input.email
+		const tokens = this.generateTokens({
+			id: user.id,
+			role: user.role
+		})
+		return { user, ...tokens }
+	}
 
-        const user = await this.usersService.findByEmail(email)
-        if(!user){
-            throw new NotFoundException('Invalid email or password')
-        }
-        const isPasswordValid = await verify(user.password, input.password)
-        if(!isPasswordValid){
-            throw new NotFoundException('Invalid email or password')
-        }
+	async getNewTokens(refreshToken: string) {
+		const result = await this.jwt.verifyAsync<Pick<IAuthTokenData, 'id'>>(refreshToken)
+		if (!result) throw new BadRequestException('Invalid refresh token')
 
-        return user
-    }
+            const user =  await this.usersService.findById(result.id)
 
-    private generateTokens(data: IAuthTokenData){
-        const accesToken = this.jwt.sign(data, {
-            expiresIn : '1h'
-        })
+            if(!user){
+                throw new NotFoundException('User not found')
+            }
 
-        const refreshToken = this.jwt.sign({
-            id: data.id
-        },{
-            expiresIn: `${this.EXPIRE_DAY_REFRESH_TOKEN}d`
-        })
+		const tokens = this.generateTokens({
+			id: user.id,
+			role: user.role
+		})
+		return {
+			user,
+			...tokens
+		}
+	}
 
-        return { accesToken, refreshToken}
-    }
+	private async validateUser(input: AuthInput) {
+		const email = input.email
 
-    toggleRefreshTokenCookie(response: Response, token: string | null){
-        const isRemoveCookie = !token
+		const user = await this.usersService.findByEmail(email)
+		if (!user) {
+			throw new NotFoundException('Invalid email or password')
+		}
+		const isPasswordValid = await verify(user.password, input.password)
+		if (!isPasswordValid) {
+			throw new NotFoundException('Invalid email or password')
+		}
 
-        const expireIn = isRemoveCookie ? new Date(0) : new Date(Date.now() + this.
-        EXPIRE_DAY_REFRESH_TOKEN * 24 * 60 * 60 * 1000)
-        response.cookie(this.REFRESH_TOKEN_NAME, token || '', {
-            httpOnly: true,
-            domain: 'localhost',
-            sameSite: isDev(this.configService) ? 'none' : 'strict',
-            expires: expireIn,
-            secure: true
-        })
-    }
+		return user
+	}
+
+	private generateTokens(data: IAuthTokenData) {
+		const accesToken = this.jwt.sign(data, {
+			expiresIn: '1h'
+		})
+
+		const refreshToken = this.jwt.sign(
+			{
+				id: data.id
+			},
+			{
+				expiresIn: `${this.EXPIRE_DAY_REFRESH_TOKEN}d`
+			}
+		)
+
+		return { accesToken, refreshToken }
+	}
+
+	toggleRefreshTokenCookie(response: Response, token: string | null) {
+		const isRemoveCookie = !token
+
+		const expireIn = isRemoveCookie
+			? new Date(0)
+			: new Date(
+					Date.now() + this.EXPIRE_DAY_REFRESH_TOKEN * 24 * 60 * 60 * 1000
+				)
+		response.cookie(this.REFRESH_TOKEN_NAME, token || '', {
+			httpOnly: true,
+			domain: 'localhost',
+			sameSite: isDev(this.configService) ? 'none' : 'strict',
+			expires: expireIn,
+			secure: true
+		})
+	}
 }

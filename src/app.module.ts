@@ -15,12 +15,12 @@ import { getGraphQLConfig } from './config/graphql.config'
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      imports: [ConfigModule],
-      useFactory: getGraphQLConfig,
-      inject: [ConfigService],
-    }),
+		GraphQLModule.forRootAsync<ApolloDriverConfig>({
+			driver: ApolloDriver,
+			imports: [ConfigModule],
+			useFactory: getGraphQLConfig,
+			inject: [ConfigService]
+		}),
 		AuthModule,
 		UsersModule,
 		RecipesModule,
