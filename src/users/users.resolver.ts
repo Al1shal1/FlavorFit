@@ -3,8 +3,8 @@ import { UsersService } from './users.service'
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { Role } from 'prisma/generated/prisma/enums'
-import type { UserUpdateInput } from 'prisma/generated/models/user/user-update.input'
-import { User } from 'prisma/generated/models/user'
+import { User } from 'prisma/generated/graphql/user'
+import { UserUpdateInput } from './inputs/user-update.input'
 
 @Resolver()
 export class UsersResolver {
@@ -20,7 +20,7 @@ export class UsersResolver {
 	@Auth()
 	updateProfile(
 		@CurrentUser('id') id: string,
-		@Args() input: UserUpdateInput
+		@Args('data') input: UserUpdateInput
 	) {
 		return this.usersService.updateProfile(id, input)
 	}

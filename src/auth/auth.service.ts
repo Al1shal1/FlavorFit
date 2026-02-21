@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { AuthInput } from './auth.input'
 import { hash, verify } from 'argon2'
-import { IAuthTokenData } from './auth.interface'
+import { TAuthTokenData } from './auth.interface'
 import { UsersService } from 'src/users/users.service'
 import { Response } from 'express'
 import { isDev } from 'src/utils/is-dev.util'
@@ -70,14 +70,15 @@ export class AuthService {
 	}
 
 	async getNewTokens(refreshToken: string) {
-		const result = await this.jwt.verifyAsync<Pick<IAuthTokenData, 'id'>>(refreshToken)
+		const result =
+			await this.jwt.verifyAsync<Pick<TAuthTokenData, 'id'>>(refreshToken)
 		if (!result) throw new BadRequestException('Invalid refresh token')
 
-            const user =  await this.usersService.findById(result.id)
+		const user = await this.usersService.findById(result.id)
 
-            if(!user){
-                throw new NotFoundException('User not found')
-            }
+		if (!user) {
+			throw new NotFoundException('User not found')
+		}
 
 		const tokens = this.generateTokens({
 			id: user.id,
@@ -104,7 +105,7 @@ export class AuthService {
 		return user
 	}
 
-	private generateTokens(data: IAuthTokenData) {
+	private generateTokens(data: TAuthTokenData) {
 		const accesToken = this.jwt.sign(data, {
 			expiresIn: '1h'
 		})
