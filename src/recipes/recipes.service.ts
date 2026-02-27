@@ -5,8 +5,16 @@ import type { PrismaService } from 'src/prisma/prisma.service'
 export class RecipesService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	getAll() {
-		return this.prisma.ingredient.findMany()
+	async getAll() {
+		const data = await this.prisma.recipe.findMany({
+			include: {
+				comments: true,
+				likes: true,
+		}})
+
+		// const likesCount = data.
+
+		return data
 	}
 
 	async getBySlug(slug: string) {
