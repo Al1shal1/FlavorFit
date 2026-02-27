@@ -3,8 +3,10 @@ import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { Difficulty } from '../prisma/difficulty.enum';
 import { UserCreateNestedOneWithoutRecipesInput } from '../user/user-create-nested-one-without-recipes.input';
-import { RecipeIngredientCreateNestedManyWithoutRecipeInput } from '../recipe-ingredient/recipe-ingredient-create-nested-many-without-recipe.input';
+import { RecipeTagCreateNestedManyWithoutRecipesInput } from '../recipe-tag/recipe-tag-create-nested-many-without-recipes.input';
 import { RecipeStepCreateNestedManyWithoutRecipeInput } from '../recipe-step/recipe-step-create-nested-many-without-recipe.input';
+import { NutritionFactCreateNestedOneWithoutRecipeInput } from '../nutrition-fact/nutrition-fact-create-nested-one-without-recipe.input';
+import { RecipeIngredientCreateNestedManyWithoutRecipeInput } from '../recipe-ingredient/recipe-ingredient-create-nested-many-without-recipe.input';
 import { CommentCreateNestedManyWithoutRecipeInput } from '../comment/comment-create-nested-many-without-recipe.input';
 import { LikeCreateNestedManyWithoutRecipeInput } from '../like/like-create-nested-many-without-recipe.input';
 
@@ -13,6 +15,9 @@ export class RecipeCreateInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => String, {nullable:false})
+    slug!: string;
 
     @Field(() => String, {nullable:false})
     title!: string;
@@ -38,11 +43,17 @@ export class RecipeCreateInput {
     @Field(() => UserCreateNestedOneWithoutRecipesInput, {nullable:false})
     author!: UserCreateNestedOneWithoutRecipesInput;
 
-    @Field(() => RecipeIngredientCreateNestedManyWithoutRecipeInput, {nullable:true})
-    recipeIngredients?: RecipeIngredientCreateNestedManyWithoutRecipeInput;
+    @Field(() => RecipeTagCreateNestedManyWithoutRecipesInput, {nullable:true})
+    tags?: RecipeTagCreateNestedManyWithoutRecipesInput;
 
     @Field(() => RecipeStepCreateNestedManyWithoutRecipeInput, {nullable:true})
     recipeSteps?: RecipeStepCreateNestedManyWithoutRecipeInput;
+
+    @Field(() => NutritionFactCreateNestedOneWithoutRecipeInput, {nullable:true})
+    nutritionFact?: NutritionFactCreateNestedOneWithoutRecipeInput;
+
+    @Field(() => RecipeIngredientCreateNestedManyWithoutRecipeInput, {nullable:true})
+    recipeIngredients?: RecipeIngredientCreateNestedManyWithoutRecipeInput;
 
     @Field(() => CommentCreateNestedManyWithoutRecipeInput, {nullable:true})
     comments?: CommentCreateNestedManyWithoutRecipeInput;

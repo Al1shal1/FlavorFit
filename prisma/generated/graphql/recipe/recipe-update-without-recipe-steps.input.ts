@@ -3,6 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { Difficulty } from '../prisma/difficulty.enum';
 import { UserUpdateOneRequiredWithoutRecipesNestedInput } from '../user/user-update-one-required-without-recipes-nested.input';
+import { RecipeTagUpdateManyWithoutRecipesNestedInput } from '../recipe-tag/recipe-tag-update-many-without-recipes-nested.input';
+import { NutritionFactUpdateOneWithoutRecipeNestedInput } from '../nutrition-fact/nutrition-fact-update-one-without-recipe-nested.input';
 import { RecipeIngredientUpdateManyWithoutRecipeNestedInput } from '../recipe-ingredient/recipe-ingredient-update-many-without-recipe-nested.input';
 import { CommentUpdateManyWithoutRecipeNestedInput } from '../comment/comment-update-many-without-recipe-nested.input';
 import { LikeUpdateManyWithoutRecipeNestedInput } from '../like/like-update-many-without-recipe-nested.input';
@@ -12,6 +14,9 @@ export class RecipeUpdateWithoutRecipeStepsInput {
 
     @Field(() => String, {nullable:true})
     id?: string;
+
+    @Field(() => String, {nullable:true})
+    slug?: string;
 
     @Field(() => String, {nullable:true})
     title?: string;
@@ -36,6 +41,12 @@ export class RecipeUpdateWithoutRecipeStepsInput {
 
     @Field(() => UserUpdateOneRequiredWithoutRecipesNestedInput, {nullable:true})
     author?: UserUpdateOneRequiredWithoutRecipesNestedInput;
+
+    @Field(() => RecipeTagUpdateManyWithoutRecipesNestedInput, {nullable:true})
+    tags?: RecipeTagUpdateManyWithoutRecipesNestedInput;
+
+    @Field(() => NutritionFactUpdateOneWithoutRecipeNestedInput, {nullable:true})
+    nutritionFact?: NutritionFactUpdateOneWithoutRecipeNestedInput;
 
     @Field(() => RecipeIngredientUpdateManyWithoutRecipeNestedInput, {nullable:true})
     recipeIngredients?: RecipeIngredientUpdateManyWithoutRecipeNestedInput;

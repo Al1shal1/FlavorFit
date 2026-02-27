@@ -10,16 +10,16 @@ export class IngredientsResolver {
 	constructor(private readonly ingredientsService: IngredientsService) {}
 
 	@Query(() => [IngredientModel], {
-    name: 'ingredients'
-  })
+		name: 'ingredients'
+	})
 	@Auth(Role.ADMIN)
 	getAll() {
 		return this.ingredientsService.getAll()
 	}
 
-	@Query(() => IngredientModel,{
-    name: 'ingredientsById'
-  })
+	@Query(() => IngredientModel, {
+		name: 'ingredientsById'
+	})
 	@Auth(Role.ADMIN)
 	getById(@Args('id') id: string) {
 		return this.ingredientsService.getById(id)
@@ -33,7 +33,10 @@ export class IngredientsResolver {
 
 	@Mutation(() => IngredientModel)
 	@Auth(Role.ADMIN)
-	updateIngredient(@Args('id') id: string, @Args('input') input: IngredientCreateInput) {
+	updateIngredient(
+		@Args('id') id: string,
+		@Args('input') input: IngredientCreateInput
+	) {
 		return this.ingredientsService.update(id, input)
 	}
 

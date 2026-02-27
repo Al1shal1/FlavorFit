@@ -1,6 +1,7 @@
 model Recipe {
     id String @id @default(cuid())
 
+    slug        String     @unique
     title       String
     description String
     calories    Int
@@ -10,11 +11,13 @@ model Recipe {
     author   User   @relation(fields: [authorId], references: [id])
     authorId String @map("author_id")
 
-    recipeIngredients RecipeIngredient[]
+    tags              RecipeTag[]
     recipeSteps       RecipeStep[]
-    
+    nutritionFact     NutritionFact?
+    recipeIngredients RecipeIngredient[]
+
     comments Comment[]
-    likes Like[]
+    likes    Like[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -25,12 +28,8 @@ model Recipe {
 model RecipeIngredient {
     id String @id @default(cuid())
 
-    name     String
-    iconUrl String @map("icon_url")
-    content String
-    quantity Float
-    unit     Unit
-    price  String
+    quantity Decimal
+    unit     Unit  @default(GRAM)
 
     recipe   Recipe @relation(fields: [recipeId], references: [id])
     recipeId String @map("recipe_id")
@@ -42,7 +41,7 @@ model RecipeIngredient {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     orderItems OrderItem[]
-    
+
     @@unique([recipeId, ingredientId])
     @@map("recipe_ingredients")
 }
@@ -50,7 +49,7 @@ model RecipeIngredient {
 model RecipeStep {
     id String @id @default(cuid())
 
-    order      Int
+    order       Int
     title       String
     description String
 
@@ -63,7 +62,34 @@ model RecipeStep {
     @@map("recipe_steps")
 }
 
+model NutritionFact {
+    id String @id @default(cuid())
 
+    proteins      Decimal
+    carbonydrates Decimal
+    fiber         Decimal
+
+    recipe   Recipe @relation(fields: [recipeId], references: [id])
+    recipeId String @unique @map("recipe_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("nutrition_facts")
+}
+
+model RecipeTag {
+    id String @id @default(cuid())
+
+    name String @unique
+
+    recipes Recipe[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("recipe_tegs")
+}
 
 enum Difficulty {
     EASY

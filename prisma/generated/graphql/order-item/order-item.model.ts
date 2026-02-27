@@ -16,6 +16,9 @@ export class OrderItem {
     @Field(() => Int, {defaultValue:1,nullable:true})
     quantity!: number | null;
 
+    @Field(() => String, {nullable:false})
+    price!: string;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 

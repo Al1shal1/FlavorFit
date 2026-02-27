@@ -6,10 +6,13 @@ import { Int } from '@nestjs/graphql';
 export class RecipeCount {
 
     @Field(() => Int, {nullable:false})
-    recipeIngredients?: number;
+    tags?: number;
 
     @Field(() => Int, {nullable:false})
     recipeSteps?: number;
+
+    @Field(() => Int, {nullable:false})
+    recipeIngredients?: number;
 
     @Field(() => Int, {nullable:false})
     comments?: number;
