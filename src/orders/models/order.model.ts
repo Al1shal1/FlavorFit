@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql'
 import { ObjectType } from '@nestjs/graphql'
 import { ID } from '@nestjs/graphql'
 import { OrderItemModel } from 'src/orders/models/order-item.model'
-import { OrderStatus } from 'src/recipes/reaction/enums'
+import { RecipeOrderStatus } from 'src/recipes/reaction/enums'
 
 @ObjectType()
 export class OrderModel {
@@ -12,8 +12,8 @@ export class OrderModel {
 	@Field(() => String, { nullable: false })
 	orderId!: string
 
-	@Field(() => OrderStatus, { defaultValue: 'PENDING', nullable: false })
-	status!: `${OrderStatus}`
+	@Field(() => RecipeOrderStatus, { defaultValue: 'PENDING', nullable: false })
+	status!: `${RecipeOrderStatus}`
 
 	@Field(() => Date, { nullable: false })
 	createdAt!: Date

@@ -1,5 +1,5 @@
 import { Field, Float, ID, InputType } from '@nestjs/graphql'
-import { OrderStatus } from 'src/recipes/reaction/enums'
+import { RecipeOrderStatus } from 'src/recipes/reaction/enums'
 
 @InputType()
 export class OrderItemInput {
@@ -18,6 +18,6 @@ export class OrderCreateInput {
 
 @InputType()
 export class OrderUpdateStatusInput {
-	@Field(() => OrderStatus)
-	status!: OrderStatus
+	@Field(() => RecipeOrderStatus)
+	status!: RecipeOrderStatus
 }

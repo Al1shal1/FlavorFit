@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID, Int, } from '@nestjs/graphql';
-import { Difficulty } from '../recipe.enum';
+import { RecipeDifficulty } from '../recipe.enum';
 import { User } from 'prisma/generated/graphql/user';
 import { NutritionFactModel } from './nutrition-fact.model';
 import { RecipeTagModel } from './recipe-tag.model';
@@ -27,8 +27,8 @@ export class RecipeModel {
     @Field(() => Int, {nullable:false})
     cookingTime!: number;
 
-    @Field(() => Difficulty, {nullable:false})
-    difficulty!: `${Difficulty}`;
+    @Field(() => RecipeDifficulty, {nullable:false})
+    difficulty!: `${RecipeDifficulty}`;
 
     @Field(() => String, {nullable:false})
     authorId!: string;

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { OrderCreateInput } from './inputs/order.input'
-import { OrderStatus } from 'src/recipes/reaction/enums'
+import { RecipeOrderStatus } from 'src/recipes/reaction/enums'
 
 @Injectable()
 export class OrdersService {
@@ -87,7 +87,7 @@ export class OrdersService {
 			data: {
 				orderId: generatedOrderId,
 				userId,
-				status: OrderStatus.PENDING,
+				status: RecipeOrderStatus.PENDING,
 				total,
 				items: {
 					create: itemsWithPrice

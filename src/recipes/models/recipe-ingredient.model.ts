@@ -3,7 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Float } from '@nestjs/graphql';
 import { IngredientModel } from '../ingredients/models/indredient.model';
-import { Unit } from '../recipe.enum';
+import { RecipeUnit } from '../recipe.enum';
 
 @ObjectType()
 export class RecipeIngredientModel {
@@ -14,8 +14,8 @@ export class RecipeIngredientModel {
     @Field(() => Float, {nullable:false})
     quantity!: number;
 
-    @Field(() => Unit, {defaultValue:'GRAM',nullable:false})
-    unit!: `${Unit}`;
+    @Field(() => RecipeUnit, {defaultValue:'GRAM',nullable:false})
+    unit!: `${RecipeUnit}`;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;

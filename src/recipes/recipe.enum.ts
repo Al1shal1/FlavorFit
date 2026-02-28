@@ -1,14 +1,14 @@
 import { registerEnumType } from "@nestjs/graphql";
 
-export enum Difficulty {
+export enum  RecipeDifficulty {
     EASY = 'EASY',
     MEDIUM = 'MEDIUM',
     HARD = 'HARD'
 }
 
-registerEnumType(Difficulty, { name: 'Difficulty', description: undefined })
+registerEnumType( RecipeDifficulty, { name: 'RecipeDifficulty', description: undefined })
 
-export enum Unit {
+export enum RecipeUnit {
     GRAM = "GRAM",
     MILLILITER = "MILLILITER",
     PIECE = "PIECE",
@@ -18,4 +18,4 @@ export enum Unit {
 }
 
 
-registerEnumType(Unit, { name: 'Unit', description: undefined })
+registerEnumType(RecipeUnit, { name: 'RecipeUnit', description: undefined })

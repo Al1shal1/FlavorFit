@@ -6,34 +6,35 @@ import { Auth } from 'src/auth/decorators/auth.decorator'
 import { RecipeModel } from './models/recipe.model'
 import { RecipeCreateInput } from './inputs/recipe.input'
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator'
+import { RecipesQueryInput } from './inputs/get-recipes-query.inputs'
 
 @Resolver()
 export class RecipesResolver {
 	constructor(
-		private readonly RecipesService: RecipesService,
-		private readonly AdminRecipesService: AdminRecipesService
+		private readonly recipesService: RecipesService,
+		private readonly adminRecipesService: AdminRecipesService
 	) {}
 
 	@Query(() => [RecipeModel], {
 		name: 'recipes'
 	})
-	getAll() {
-		return this.RecipesService.getAll()
+	getAll(@Args('input') input: RecipesQueryInput) {
+		return this.recipesService.getAll(input)
 	}
 
 	@Query(() => RecipeModel, {
 		name: 'recipesBySlug'
 	})
 	getBySlug(@Args('slug') slug: string) {
-		return this.RecipesService.getBySlug(slug)
+		return this.recipesService.getBySlug(slug)
 	}
 
 	@Query(() => [RecipeModel], {
-		name: 'admin-recipes'
+		name: 'adminRecipes'
 	})
 	@Auth(Role.ADMIN)
 	getAllAdmin() {
-		return this.AdminRecipesService.getAll()
+		return this.adminRecipesService.getAll()
 	}
 
 	@Query(() => RecipeModel, {
@@ -41,7 +42,7 @@ export class RecipesResolver {
 	})
 	@Auth(Role.ADMIN)
 	getById(@Args('id') id: string) {
-		return this.AdminRecipesService.getById(id)
+		return this.adminRecipesService.getById(id)
 	}
 
 	@Mutation(() => RecipeModel)
@@ -50,7 +51,7 @@ export class RecipesResolver {
 		@CurrentUser() authorId: string,
 		@Args('input') input: RecipeCreateInput
 	) {
-		return this.AdminRecipesService.create(authorId, input)
+		return this.adminRecipesService.create(authorId, input)
 	}
 
 	@Mutation(() => RecipeModel)
@@ -59,12 +60,12 @@ export class RecipesResolver {
 		@Args('id') id: string,
 		@Args('input') input: RecipeCreateInput
 	) {
-		return this.AdminRecipesService.update(id, input)
+		return this.adminRecipesService.update(id, input)
 	}
 
 	@Mutation(() => RecipeModel)
 	@Auth(Role.ADMIN)
 	deleteRecipeById(@Args('id') id: string) {
-		return this.AdminRecipesService.deleteById(id)
+		return this.adminRecipesService.deleteById(id)
 	}
 }

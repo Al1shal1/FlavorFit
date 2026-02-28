@@ -1,20 +1,56 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { RecipesQueryInput } from './inputs/get-recipes-query.inputs'
+import { Prisma } from 'prisma/generated/prisma/client'
 
 @Injectable()
 export class RecipesService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async getAll() {
-		const data = await this.prisma.recipe.findMany({
+	async getAll({ page, limit, searchItems, sort }: RecipesQueryInput) {
+		const skip = (page - 1) * limit
+
+		return this.prisma.recipe.findMany({
+			skip,
+			take: limit,
+
+			where: {
+				...(searchItems && {
+					OR: [
+						{ title: { contains: searchItems, mode: 'insensitive' } },
+						{ description: { contains: searchItems, mode: 'insensitive' } },
+						{
+							recipeIngredients: {
+								some: {
+									ingredient: {
+										name: { contains: searchItems, mode: 'insensitive' }
+									}
+								}
+							}
+						}
+					]
+				})
+			},
+			orderBy: this.getOrderBy(sort),
 			include: {
-				comments: true,
-				likes: true,
-		}})
+				_count: {
+					select: { likes: true }
+				}
+			}
+		})
+	}
 
-		// const likesCount = data.
+	private getOrderBy(sort?: string) {
+		switch (sort) {
+			case 'recommended':
+				return { likes: { _count: Prisma.SortOrder.desc } }
 
-		return data
+			case 'popular':
+				return { views: Prisma.SortOrder.desc }
+
+			default:
+				return { createdAt: Prisma.SortOrder.desc }
+		}
 	}
 
 	async getBySlug(slug: string) {

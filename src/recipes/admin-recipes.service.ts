@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { PrismaService } from 'src/prisma/prisma.service'
-import type { RecipeCreateInput } from './inputs/recipe.input'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { RecipeCreateInput } from './inputs/recipe.input'
 
 @Injectable()
 export class AdminRecipesService {
@@ -27,7 +27,7 @@ export class AdminRecipesService {
 		{
 			recipeSteps,
 			nutritionFact,
-			ingredientsIds,
+			ingredients,
 			tags,
 			...data
 		}: RecipeCreateInput
@@ -48,11 +48,11 @@ export class AdminRecipesService {
 				recipeSteps: {
 					create: recipeSteps
 				},
-				...(!!ingredientsIds?.length && {
+				...(!!ingredients?.length && {
 					recipeIngredients: {
-						create: ingredientsIds.map((ingredientId, index) => ({
-							ingredientId,
-							quantity: 1,
+						create: ingredients.map((item, index) => ({
+							ingredientId: item.ingredientId,
+							quantity: item.quantity,
 							order: index
 						}))
 					}
@@ -78,7 +78,7 @@ export class AdminRecipesService {
 		{
 			recipeSteps,
 			nutritionFact,
-			ingredientsIds,
+			ingredients,
 			tags,
 			...data
 		}: RecipeCreateInput
@@ -107,12 +107,12 @@ export class AdminRecipesService {
 						}))
 					}
 				}),
-				...(ingredientsIds && {
+				...(ingredients && {
 					recipeIngredients: {
 						deleteMany: {},
-						create: ingredientsIds.map((ingredientId, index) => ({
-							ingredientId,
-							quantity: 1,
+						create: ingredients.map((item, index) => ({
+							ingredientId: item.ingredientId,
+							quantity: item.quantity,
 							order: index
 						}))
 					}
